@@ -11,9 +11,9 @@ enderecos = [
         ["Av Iguaçu, 1236, Curitiba","Sugisawa","blue"],
         [ "Arthur Bernardes, 1385, Curitiba","Trabalho Lindsey" , "orange"],
         [ "Augusto Stelfeld, 1727, Curitiba","Cermen","blue"],
-        ["Sao Jose Calazans, 100, Curitiba","Consuelo", "green"],
+        ["Sao Jose Calazans, 500, Curitiba","Suela", "green"],
         ["Dep Mario de Barros, 1130, Curitiba","Luzinho","green"],
-        ["Rua Carlos de Campos, 1100, Curitiba","Tyta","green"],
+        ["Rua Carlos de Campos, 1100, Curitiba","Tita","green"],
         ["Theodoro Makiloka, 2179, Curitiba","DuLeo", "darkblue"] ,
         ["Estrada Nova de Colombo, 5504, Curitiba", "<a href=\"https://spacuritiba.org.br/\">Sociedade Protetora dos Animais</a>", "green"]
         ]
