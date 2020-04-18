@@ -7,7 +7,7 @@ print ("Gazstao (f) 2020-04-17 21h - StopMotion\nOpçoes:")
 print("r - record\nf - flip\nn - inverte cor\ng - grayscale\nd - diferencial")
 print("p - persistencia\nt - timelapse\n[ - atualiza background\n l.,/ - muda posicao OSD")
 
-escala = 1
+escala = 1.5
 inverte = False
 gray = True
 recording = False
