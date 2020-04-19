@@ -4,13 +4,13 @@ import curses
 from datetime import datetime
 
 print ("\nGazstao (f) 2020-04-17 21h - StopMotion\n\nOpçoes:")
-print("r - record\nf - flip\nn - inverte cor\ng - grayscale\nd - diferencial")
+print("r - record\nf - flip\nn - inverte cor\ng - grayscale\nd - diferencial\ns - slow motion")
 print("p - persistencia\nt - timelapse\n[ - atualiza background\n l.,/ - muda posicao OSD\n")
 
 spaceh=20
 spacev=30
-escala = 1.5
-fontScale = 1.5
+escala = 1
+fontScale = 1
 fontColor = (255,255,255)
 inverte = False
 gray = True
@@ -19,9 +19,11 @@ diferencial = False
 persistencia = False
 flip = True
 timelapse = False
+timeLapseFrame = 500
+slowMotion = False
 
 data = datetime.now()
-strData = "Movies/StopMotion-{}{}{}-{}h{}m{}s".format(data.year, data.month, data.day, data.hour, data.minute, data.second)
+strData = "StopMotion-{}{}{}-{}h{}m{}s".format(data.year, data.month, data.day, data.hour, data.minute, data.second)
 print("Gravando em: "+strData+"(-RAW).mp4")
 
 # captura de vídeo
@@ -43,7 +45,7 @@ cv2.moveWindow(nomeJanela, 0, 0)
 # Prepara a gravação do arquivo
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video_writer = cv2.VideoWriter(strData+".mp4", fourcc, 15.0, (frame_bg.shape[1], frame_bg.shape[0]))
-video_writer_show = cv2.VideoWriter(strData+"-RAW.mp4", fourcc, 15.0, (int(frame_bg.shape[1]/escala),int (frame_bg.shape[0]/escala)))
+video_writer_show = cv2.VideoWriter(strData+"-Showed.mp4", fourcc, 15.0, (int(frame_bg.shape[1]/escala),int (frame_bg.shape[0]/escala)))
 
 while True:
 
@@ -52,7 +54,7 @@ while True:
 
     # Verifica se alguma tecla foi pressionada
     if timelapse:
-        key = cv2.waitKey(200)
+        key = cv2.waitKey(timeLapseFrame)
     else:
         key = cv2.waitKey(1)
 
@@ -103,6 +105,12 @@ while True:
         else:
             timelapse = True
 
+    if key == ord('s'):
+        if slowMotion:
+            slowMotion = False
+        else:
+            slowMotion = True
+
     if key == ord('['):
         frame_bg = frame
 
@@ -141,8 +149,7 @@ while True:
         frame_num = frame_num + 1
         video_writer.write(frame)  # escreve o frame_bg
 
-    if key == ord(' '):
-        for i in range(5):
+    if (key == ord(' ')) or slowMotion:
             frame_num = frame_num + 1
             video_writer.write(frame)
 
@@ -157,19 +164,20 @@ while True:
         frame = cv2.putText(frame,"Persistencia", (spaceh+h,spacev*5+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
     if timelapse:
         frame = cv2.putText(frame,"TimeLapse", (spaceh+h,spacev*6+v), cv2.FONT_HERSHEY_PLAIN, fontScale,fontColor,1)
+    if slowMotion:
+        frame = cv2.putText(frame,"SlowMotion",(spaceh+h,spacev*7+v), cv2.FONT_HERSHEY_PLAIN, fontScale,fontColor,1)
 
     if recording:
-        frame = cv2.putText(frame,"Gravando", (spaceh+h,spacev*7+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
+        frame = cv2.putText(frame,"Gravando", (spaceh+h,spacev*8+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
         # Pisca REC na tela
         segundos = data.second
         if (segundos%2==0):
-            frame = cv2.circle(frame,(int(spaceh/2)+h,spacev*7-5+v),4,(0,0,255),4)
+            frame = cv2.circle(frame,(int(spaceh/2)+h,spacev*8-4+v),4,(0,0,255),4)
 
     # Mostra um frame redimensionado
     frame_resized = cv2.resize(frame, (int (frame.shape[1]/ escala), int (frame.shape[0]/escala) ))
     video_writer_show.write(frame_resized)
     cv2.imshow(nomeJanela,frame_resized)
-
 
 video.release()
 video_writer.release()

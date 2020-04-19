@@ -1,0 +1,41 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/2 - English Dictionary"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/3 - SQLConnect"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/4 - Pandas"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/5 - Numpy"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/6 - MapApp"
+		},
+		{
+			"path": "/Users/gazstao/Site"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/7 - Exceptions"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/8 - SiteBolckerApp"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/9 - PythonWebSite"
+		},
+		{
+			"path": "/Users/gazstao/Documents/Curso Python/10 - BookStore"
+		},
+		{
+			"name": "BasicSQLite3",
+			"path": "/Users/gazstao/Documents/Curso Python/10 - BookStore/BasicSQLite3"
+		}
+	]
+}
