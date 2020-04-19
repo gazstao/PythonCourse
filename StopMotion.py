@@ -3,11 +3,15 @@ import cv2
 import curses
 from datetime import datetime
 
-print ("Gazstao (f) 2020-04-17 21h - StopMotion\nOpçoes:")
+print ("\nGazstao (f) 2020-04-17 21h - StopMotion\n\nOpçoes:")
 print("r - record\nf - flip\nn - inverte cor\ng - grayscale\nd - diferencial")
-print("p - persistencia\nt - timelapse\n[ - atualiza background\n l.,/ - muda posicao OSD")
+print("p - persistencia\nt - timelapse\n[ - atualiza background\n l.,/ - muda posicao OSD\n")
 
+spaceh=20
+spacev=30
 escala = 1.5
+fontScale = 1.5
+fontColor = (255,255,255)
 inverte = False
 gray = True
 recording = False
@@ -15,6 +19,10 @@ diferencial = False
 persistencia = False
 flip = True
 timelapse = False
+
+data = datetime.now()
+strData = "Movies/StopMotion-{}{}{}-{}h{}m{}s".format(data.year, data.month, data.day, data.hour, data.minute, data.second)
+print("Gravando em: "+strData+"(-RAW).mp4")
 
 # captura de vídeo
 video = cv2.VideoCapture(0)
@@ -34,8 +42,8 @@ cv2.moveWindow(nomeJanela, 0, 0)
 
 # Prepara a gravação do arquivo
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video_writer = cv2.VideoWriter("StopMotion.mp4", fourcc, 15.0, (frame_bg.shape[1], frame_bg.shape[0]))
-video_writer_show = cv2.VideoWriter("GazstaoRAW.mp4", fourcc, 15.0, (int(frame_bg.shape[1]/escala),int (frame_bg.shape[0]/escala)))
+video_writer = cv2.VideoWriter(strData+".mp4", fourcc, 15.0, (frame_bg.shape[1], frame_bg.shape[0]))
+video_writer_show = cv2.VideoWriter(strData+"-RAW.mp4", fourcc, 15.0, (int(frame_bg.shape[1]/escala),int (frame_bg.shape[0]/escala)))
 
 while True:
 
@@ -126,7 +134,7 @@ while True:
     # Marca de agua
     #if frame_num <100:
     data = datetime.now()
-    frame = cv2.putText(frame,"GzCam 2019 (f) by GAZSTAO   Frame:{} em {}/{}/{}  {}:{}:{}.{}".format(frame_num, data.year, data.month, data.day, data.hour, data.minute, data.second, data.microsecond), (10,30),cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+    frame = cv2.putText(frame,"GzCam 2019 (f) by GAZSTAO   Frame:{} em {}/{}/{}  {}:{}:{}.{}".format(frame_num, data.year, data.month, data.day, data.hour, data.minute, data.second, data.microsecond), (spaceh,spacev),cv2.FONT_HERSHEY_PLAIN, fontScale,fontColor,1)
 
     # Se estiver gravando, grava o frame
     if recording:
@@ -134,27 +142,28 @@ while True:
         video_writer.write(frame)  # escreve o frame_bg
 
     if key == ord(' '):
-        frame_num = frame_num + 1
-        video_writer.write(frame)
+        for i in range(5):
+            frame_num = frame_num + 1
+            video_writer.write(frame)
 
     # Mensagens de efeitos de vídeo
     if inverte:
-        frame = cv2.putText(frame,"Negativo", (20+h,20+v),cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"Negativo", (spaceh+h,spacev*2+v),cv2.FONT_HERSHEY_PLAIN, fontScale,fontColor,1)
     if gray:
-        frame = cv2.putText(frame,"GrayScale", (20+h,40+v), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"GrayScale", (spaceh+h,spacev*3+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
     if diferencial:
-        frame = cv2.putText(frame,"Diferencial", (20+h,60+v), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"Diferencial", (spaceh+h,spacev*4+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
     if persistencia:
-        frame = cv2.putText(frame,"Persistencia", (20+h,80+v), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"Persistencia", (spaceh+h,spacev*5+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
     if timelapse:
-        frame = cv2.putText(frame,"TimeLapse", (20+h,100+v), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"TimeLapse", (spaceh+h,spacev*6+v), cv2.FONT_HERSHEY_PLAIN, fontScale,fontColor,1)
 
     if recording:
-        frame = cv2.putText(frame,"Gravando", (20+h,120+v), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255),1)
+        frame = cv2.putText(frame,"Gravando", (spaceh+h,spacev*7+v), cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor,1)
         # Pisca REC na tela
         segundos = data.second
         if (segundos%2==0):
-            frame = cv2.circle(frame,(10+h,115+v),4,(0,0,255),4)
+            frame = cv2.circle(frame,(int(spaceh/2)+h,spacev*7-5+v),4,(0,0,255),4)
 
     # Mostra um frame redimensionado
     frame_resized = cv2.resize(frame, (int (frame.shape[1]/ escala), int (frame.shape[0]/escala) ))
