@@ -73,19 +73,21 @@ def show(location):
     printe ("New new_deaths_per_million",json_world_newdeatspermillion)
 
 #show("OWID_WRL")
+repeat = 1;
 skipped = ""
-local = input("Local: ")
-for place in json_obj:
-    if (place == local):
-        show (place)
-    else:
-        skipped = skipped + " " + place
+while repeat:
+    local = input("\nLocal: ")
+    if (local == "exit"):
+        repeat = 0
+    if (local == "all"):
+        local = "OWID_WRL"
+    for place in json_obj:
+        if (place == local):
+            show (place)
+        else:
+            skipped = skipped + " " + place
+    if (local == "?"):
+        print (skipped)
 
 
-# json_world_ = json_world[""]
-# print ("\n xxxx : {:,}".format(json_world_))
-yes = input ("\nShow skipped? (y/n): ")
-if (yes == "y" or yes == "Y"):
-    print("\nSkipped: "+skipped)
-else:
-    print("")
+print("")
