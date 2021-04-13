@@ -6,8 +6,6 @@ arquivo = "/Users/gazstao/github/covid-19-data/public/data/latest/owid-covid-lat
 print("##########################################\nGazstao Data Parser (c) 2021-04-11")
 print("Informacoes sobre o coronavirus carregadas do arquivo:\n"+arquivo+".\n##########################################\n")
 
-num_format = "{:,}".format
-
 with open(arquivo) as file:
     data = file.read()
 
