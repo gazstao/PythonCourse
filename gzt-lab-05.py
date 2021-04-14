@@ -5,6 +5,7 @@ import json
 import pymongo
 import sys
 
+print("\n\nGazstao DataParserExperiment 2021-04-13 19h16\n")
 #
 #       Leitura do arquivo e criação de objeto JSON
 #
@@ -12,7 +13,7 @@ import sys
 def file2data():
 
     arquivo = "/Users/gazstao/github/covid-19-data/public/data/latest/owid-covid-latest.json"
-    print("\n\nGazstao DataParserExperiment 2021-04-13\nArquivo :"+arquivo)
+    print("Arquivo :"+arquivo)
 
     with open(arquivo) as file:
         dados = file.read()
@@ -24,24 +25,38 @@ def file2data():
             listaDados.append(objeto[item])
 
 #
+#       Testa conexão ao Mongo e lista Bancos de Dados e Collections
+#
+
+def testaMongo(myclient):
+    for eachDB in myclient.list_database_names():
+        print("\n Banco de Dados:\t {}".format(eachDB))
+
+        mydb = myclient[eachDB]
+        for item in mydb.list_collection_names():
+            print("    Collection:\t {}".format(item))
+
+#
 #       Mongo Conection
 #
 
 dbName = "lab05db"
-conStr = "mongodb://localhost:27017/"
+collName = "data05"
 
 try:
+
+    # conecta no mongoDB
+    conStr = "mongodb://localhost:27017/"
     myclient = pymongo.MongoClient(conStr)
-    print("Cliente criado...")
-    print("Bancos de Dados encontrados :")
-    for eachDB in myclient.list_database_names():
-        print("  {}".format(eachDB))
-    mydb = myclient[dbName]
-    print("Conectado em {}".format(dbName))
+    print("Cliente criado :{}".format(conStr))
+    #testaMongo(myclient)
 
 except:
-    print("Não foi possível conectar ao banco de dados {} em {}".format(dbName, conStr))
+
     print("Erro: {}".format(sys.exc_info()[0]))
 
-for item in mydb.find():
-    print(item)
+prodDB = myclient[dbName]
+prodCollection = prodDB[collName]
+print(prodCollection.find_one({}))
+
+print("")
