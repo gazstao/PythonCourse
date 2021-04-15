@@ -6,12 +6,27 @@ import json
 import pymongo
 import sys
 
-dbName = "gzt06"
-collName = "data20210414"
+conStr = "mongodb://localhost:27017/"
+dbName = "gzt-lab-06"
+collName = "teste02"
 arquivo = "/Users/gazstao/github/covid-19-data/public/data/latest/owid-covid-latest.json"
-dados = ""
 
 print("\n\n\n\n\n\n\nGazstao DataParserExperiment v0.06 2021-04-15 9h09")
+
+
+#
+#       Grava Arquivo JSON único para cada file2data
+#
+
+def gravaJSONFile(dados):
+
+        jsonData = json.loads(dados)
+        for item in jsonData:
+            if (item == "OWID_WRL"):
+                dataref = jsonData[item]["last_updated_date"]
+                f = open("Data-"+dataref+".json", "w")
+                f.write(dados)
+                f.close()
 
 
 #
@@ -22,29 +37,34 @@ def file2data(arquivo):
 
     with open(arquivo) as file:
 
-        dados = file.read()
-        print("\nArquivo {} carregado com sucesso!".format(arquivo))
+        try:
+            dados = file.read()
+            print("\nArquivo {} carregado com sucesso!".format(arquivo))
+            gravaJSONFile(dados)
+            return dados
 
-        objJSON = json.loads(dados)
-        return objJSON
+        except:
+            print("Não foi possível carregar os dados. Erro: {}".format(sys.exc_info()[0]))
+
 
 
 #
 #     Lista dados
 #
 
-def listaDados(lista):
+def listaDados(dados):
 
     qty = 0
+    lista = json.loads(dados)
     for item in lista:
-
         qty += 1
         print("{}){}".format(item, lista[item]["location"]), end="\t\t\t\t")
 
         if (qty%3 == 0):
             print("") # pula linha
 
-    print ("A lista tem {} itens.".format(qty)
+    print ("A lista tem {} itens.".format(qty))
+    return lista
 
 
 #
@@ -66,8 +86,10 @@ def insereDados(dados, dbConn):
 #
 
 def testaMongo(myclient):
+
     for eachDB in myclient.list_database_names():
         mydb = myclient[eachDB]
+
         for item in mydb.list_collection_names():
             print("\t{}:{}".format(eachDB,item))
 
@@ -75,66 +97,66 @@ def testaMongo(myclient):
 #       Mongo Conection
 #
 
-try:
+def conectaMongoDB(connectionString):
 
-    conStr = "mongodb://localhost:27017/"
-    myclient = pymongo.MongoClient(conStr)
-    print("\nConectado :{}".format(conStr))
-    testaMongo(myclient)
+    try:
+        myclient = pymongo.MongoClient(connectionString)
+        print("\nConectado :{}".format(connectionString))
+        return myclient
 
-except:
-
-    print("Erro: {}".format(sys.exc_info()[0]))
+    except:
+        print("Erro: {}".format(sys.exc_info()[0]))
 
 
 #
 #   EL PROGRAMO
 #
 
-prodDB = myclient[dbName]
-prodCollection = prodDB[collName]
-
-dadosJSON = file2data(arquivo)
+dados = file2data(arquivo)
 
 resposta = input ("\nDeseja carregar os dados para o Banco de Dados?\t")
-if (resposta == "y" or resposta == "Y"):
+if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
+
+    nomeDB = input("Nome do Banco de Dados (Enter para usar o padrao "+dbName+"): ")
+    if (nomeDB == ""):
+        nomeDB = dbName
+
+    nomeCol = input("Nome da Collections (Enter para usar o padrao "+collName+"): ")
+    if (nomeCol == ""):
+        nomeCol = collName
+    try:
+        cliente = conectaMongoDB(conStr)
+        testaMongo(cliente)
+        prodDB = cliente[dbName]
+        prodCollection = prodDB[collName]
+    except:
+        print("Não foi possível carregar os dados. Erro: {}".format(sys.exc_info()[0]))
 
     print("Carregando dados para {}".format(prodCollection))
-    insereDados(dadosJSON, prodCollection)
+    insereDados(dados, prodCollection)
 
 else:
-
     print("Passando...")
 
 resposta = input ("\nDeseja visualizar os dados?\t")
-if (resposta == "y" or resposta == "Y"):
-
+if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
     repete = True
-    listaDados(dadosJSON)
-
+    dadosJSON = listaDados(dados)
 else:
-
     print("Passando...")
     repete = False
 
 while repete:
-
     item = input ("\nDeseja ver quais informações? ")
-
     if (item == "exit"):
         repete = False
-
     else:
-
         if (item == "" or item == "?"):
-            listaDados(dadosJSON)
+            dadosJSON = listaDados(dados)
             print("Digite exit para sair")
-
         else:
-
             try:
                 print(json.dumps(dadosJSON[item], indent = 4, sort_keys = True))
-
             except:
                 print("Não foi possível carregar os dados. Erro: {}".format(sys.exc_info()[0]))
 
