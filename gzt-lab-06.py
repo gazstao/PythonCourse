@@ -7,9 +7,10 @@ import pymongo
 import sys
 
 conStr = "mongodb://localhost:27017/"
-dbName = "gzt-lab-06"
-collName = "teste02"
+dbName = "DailyData"
+collName = "dataref"
 arquivo = "/Users/gazstao/github/covid-19-data/public/data/latest/owid-covid-latest.json"
+#arquivo = "Data-2021-04-13.json"
 
 print("\n\n\n\n\n\n\nGazstao DataParserExperiment v0.06 2021-04-15 9h09")
 
@@ -20,6 +21,7 @@ print("\n\n\n\n\n\n\nGazstao DataParserExperiment v0.06 2021-04-15 9h09")
 
 def gravaJSONFile(dados):
 
+        global collName
         jsonData = json.loads(dados)
         for item in jsonData:
             if (item == "OWID_WRL"):
@@ -27,6 +29,8 @@ def gravaJSONFile(dados):
                 f = open("Data-"+dataref+".json", "w")
                 f.write(dados)
                 f.close()
+                print("Arquivo Data-"+dataref+".json criado")
+                collName = "{}-{}".format(collName, dataref)
 
 
 #
@@ -115,7 +119,7 @@ def conectaMongoDB(connectionString):
 dados = file2data(arquivo)
 
 resposta = input ("\nDeseja carregar os dados para o Banco de Dados?\t")
-if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
+if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S" or resposta == ""):
 
     nomeDB = input("Nome do Banco de Dados (Enter para usar o padrao "+dbName+"): ")
     if (nomeDB == ""):
@@ -124,26 +128,33 @@ if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
     nomeCol = input("Nome da Collections (Enter para usar o padrao "+collName+"): ")
     if (nomeCol == ""):
         nomeCol = collName
+
+    adiciona = True
     try:
         cliente = conectaMongoDB(conStr)
         testaMongo(cliente)
         prodDB = cliente[dbName]
         prodCollection = prodDB[collName]
+        for item in prodDB.list_collection_names():
+            if (item == collName):
+                resposta = input("Já existe uma coleção com esse nome. Adicionar mesmo assim? ")
+                if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
+                    adiciona = True
+                else:
+                    adiciona = False
+
     except:
         print("Não foi possível carregar os dados. Erro: {}".format(sys.exc_info()[0]))
 
-    print("Carregando dados para {}".format(prodCollection))
-    insereDados(dados, prodCollection)
-
-else:
-    print("Passando...")
+    if (adiciona):
+        print("Carregando dados para {}".format(prodCollection))
+        insereDados(dados, prodCollection)
 
 resposta = input ("\nDeseja visualizar os dados?\t")
-if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S"):
+if (resposta == "y" or resposta == "Y" or resposta == "s" or resposta == "S" or resposta == ""):
     repete = True
     dadosJSON = listaDados(dados)
 else:
-    print("Passando...")
     repete = False
 
 while repete:
