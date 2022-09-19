@@ -1,0 +1,15 @@
+ISS Tracking (f) Gazstao V1.220905.1631 - Searching at http://api.open-notify.org/astros.json e http://api.open-notify.org/iss-now.json
+Existem atualmente 10 astronautas no espaco 07/09/2022 21:12:48 
+
+Oleg Artemyev - on board of ISS
+Denis Matveev - on board of ISS
+Sergey Korsakov - on board of ISS
+Kjell Lindgren - on board of ISS
+Bob Hines - on board of ISS
+Samantha Cristoforetti - on board of ISS
+Jessica Watkins - on board of ISS
+Cai Xuzhe - on board of Tiangong
+Chen Dong - on board of Tiangong
+Liu Yang - on board of Tiangong
+
+Sua localizacao atual aproximada eh [-23.5475, -46.6361]
